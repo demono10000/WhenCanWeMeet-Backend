@@ -49,7 +49,9 @@ public class SecurityConfig {
     @Bean
     @Order(100)
     public SecurityFilterChain formLoginFilterChain(HttpSecurity http) throws Exception {
-        http.authenticationProvider(authenticationProvider())
+        http
+                .csrf().disable()
+                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .anyRequest().authenticated()
@@ -63,28 +65,4 @@ public class SecurityConfig {
         System.out.println("formLoginFilterChain");
         return http.build();
     }
-//
-//    @Bean
-//    @Order(101)
-//    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-//        http.authenticationProvider(authenticationProvider())
-//                .securityMatcher("/api/**")
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .anyRequest().hasRole("ADMIN")
-//                )
-//                .httpBasic(withDefaults());
-//        return http.build();
-//    }
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests(authorize -> authorize
-//                        .requestMatchers(HttpMethod.POST, "/register").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin(withDefaults());
-//        return http.build();
-//    }
-
-
 }

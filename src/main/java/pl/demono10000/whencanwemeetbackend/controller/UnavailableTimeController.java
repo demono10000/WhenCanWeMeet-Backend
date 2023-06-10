@@ -1,5 +1,6 @@
 package pl.demono10000.whencanwemeetbackend.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,14 +12,11 @@ import pl.demono10000.whencanwemeetbackend.model.UserUnavailability;
 import pl.demono10000.whencanwemeetbackend.service.UnavailabilityService;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/unavailable")
 public class UnavailableTimeController {
 
     private final UnavailabilityService unavailabilityService;
-
-    public UnavailableTimeController(UnavailabilityService unavailabilityService) {
-        this.unavailabilityService = unavailabilityService;
-    }
 
     @PostMapping
     public ResponseEntity<Void> addUnavailableTime(@RequestBody UnavailableTimeDto unavailableTimeDto) {

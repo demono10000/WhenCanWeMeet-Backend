@@ -1,5 +1,6 @@
 package pl.demono10000.whencanwemeetbackend.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,22 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.demono10000.whencanwemeetbackend.dto.UserDto;
 import pl.demono10000.whencanwemeetbackend.model.User;
 import pl.demono10000.whencanwemeetbackend.repository.UserRepository;
+import pl.demono10000.whencanwemeetbackend.service.RegistrationService;
 
 @RestController
+@RequiredArgsConstructor
 public class RegistrationController {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final RegistrationService registrationService;
 
     @PostMapping("/register")
-    public void register(@RequestBody UserDto userDto) {
-        System.out.println("register");
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userRepository.save(user);
+    public User register(@RequestBody UserDto userDto) {
+        return registrationService.register(userDto);
     }
 }

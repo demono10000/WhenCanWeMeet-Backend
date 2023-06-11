@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import pl.demono10000.whencanwemeetbackend.model.User;
 import pl.demono10000.whencanwemeetbackend.repository.UserRepository;
 
-import java.util.Optional;
-
 @Service
 public class UserService {
 

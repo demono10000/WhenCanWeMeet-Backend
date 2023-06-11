@@ -16,7 +16,7 @@ import java.util.List;
 public class Group {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
@@ -25,5 +25,12 @@ public class Group {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
     private List<Meeting> meetings = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
+    private List<GroupInvitation> invitations = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
 }
 

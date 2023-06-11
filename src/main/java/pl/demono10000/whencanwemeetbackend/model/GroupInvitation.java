@@ -3,7 +3,8 @@ package pl.demono10000.whencanwemeetbackend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -11,16 +12,19 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Meeting {
+@Table(name = "group_invitations")
+public class GroupInvitation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private LocalDateTime start_date;
-    private LocalDateTime end_date;
-    private boolean isRecurring;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
+

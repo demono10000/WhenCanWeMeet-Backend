@@ -1,7 +1,6 @@
 package pl.demono10000.whencanwemeetbackend.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -9,7 +8,6 @@ import pl.demono10000.whencanwemeetbackend.model.User;
 import pl.demono10000.whencanwemeetbackend.service.UserService;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

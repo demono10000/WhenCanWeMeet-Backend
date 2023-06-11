@@ -6,30 +6,30 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import pl.demono10000.whencanwemeetbackend.repository.UserRepository;
+import pl.demono10000.whencanwemeetbackend.service.CustomUserDetailsService;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+    @Autowired
+    private UserRepository userRepository;
     @Bean
-    public UserDetailsService userDetailsService() {
-        PasswordEncoder encoder = passwordEncoder();
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-        manager.createUser(User.withUsername("user").password(encoder.encode("password")).roles("USER").build());
-        manager.createUser(User.withUsername("admin").password(encoder.encode("password")).roles("USER", "ADMIN").build());
-        return manager;
+    public CustomUserDetailsService userDetailsService() {
+//        PasswordEncoder encoder = passwordEncoder();
+//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+//        manager.createUser(User.withUsername("user").password(encoder.encode("password")).roles("USER").build());
+//        manager.createUser(User.withUsername("admin").password(encoder.encode("password")).roles("USER", "ADMIN").build());
+//        return manager;
+        return new CustomUserDetailsService(userRepository);
     }
 
     @Bean
@@ -50,10 +50,10 @@ public class SecurityConfig {
     @Order(100)
     public SecurityFilterChain formLoginFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(withDefaults());
@@ -62,7 +62,6 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login")
                 );
-        System.out.println("formLoginFilterChain");
         return http.build();
     }
 }

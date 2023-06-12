@@ -55,4 +55,8 @@ public class UserPrincipal implements UserDetails {
     public User getUser() {
         return this.user;
     }
+
+    public long getId() {
+        return this.user.getId();
+    }
 }

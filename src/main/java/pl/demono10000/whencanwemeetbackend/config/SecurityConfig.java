@@ -79,11 +79,6 @@ public class SecurityConfig {
                         .passwordParameter("password") // nazwa parametru password
                 );
         http.cors(Customizer.withDefaults());
-        http
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
-                );
         return http.build();
     }
 
@@ -101,6 +96,10 @@ public class SecurityConfig {
         ObjectNode responseBody = new ObjectMapper().createObjectNode();
         responseBody.put("message", "Login success");
         responseBody.put("token", token);
+        // send username
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        responseBody.put("username", userPrincipal.getUsername());
+        responseBody.put("id", userPrincipal.getId());
 
         response.getWriter().write(responseBody.toString());
 

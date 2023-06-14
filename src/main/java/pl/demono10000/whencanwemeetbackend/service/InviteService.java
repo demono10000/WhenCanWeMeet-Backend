@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import pl.demono10000.whencanwemeetbackend.dto.InvitationDto;
 import pl.demono10000.whencanwemeetbackend.dto.InvitationResponseDto;
 import pl.demono10000.whencanwemeetbackend.dto.InviteDto;
 import pl.demono10000.whencanwemeetbackend.model.Group;
@@ -50,5 +51,18 @@ public class InviteService {
         GroupInvitation groupInvitation = inviteRepository.findById(invitationResponseDto.id()).orElseThrow();
         inviteRepository.delete(groupInvitation);
         return invitationResponseDto;
+    }
+    @Transactional
+    public InvitationDto[] list() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        User user = userPrincipal.getUser();
+        GroupInvitation[] groupInvitations = inviteRepository.findAllByUser(user);
+        InvitationDto[] invitationDtos = new InvitationDto[groupInvitations.length];
+        for (int i = 0; i < groupInvitations.length; i++) {
+            User owner = groupInvitations[i].getGroup().getOwner();
+            invitationDtos[i] = new InvitationDto(groupInvitations[i].getGroup().getName(), owner.getUsername(), groupInvitations[i].getId());
+        }
+        return invitationDtos;
     }
 }

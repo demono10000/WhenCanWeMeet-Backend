@@ -19,6 +19,7 @@ public class Meeting {
     private LocalDateTime start_date;
     private LocalDateTime end_date;
     private boolean isRecurring;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "group_id")

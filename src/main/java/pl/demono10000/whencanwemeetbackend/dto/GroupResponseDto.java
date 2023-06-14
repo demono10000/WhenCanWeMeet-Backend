@@ -13,6 +13,15 @@ public class GroupResponseDto {
     private Long ownerId;
     private List<String> users;
     private List<MeetingDto> meetings;
+    private String ownerName;
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
 
     public List<String> getUsers() {
         return users;

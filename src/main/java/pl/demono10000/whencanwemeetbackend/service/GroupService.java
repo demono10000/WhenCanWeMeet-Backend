@@ -29,7 +29,9 @@ public class GroupService {
     public GroupResponseDto getGroupDetails(Long id) {
         Group group = groupRepository.findById(id)
                 .orElseThrow();
-        return GroupResponseDto.fromGroup(group);
+        GroupResponseDto responseDto = GroupResponseDto.fromGroup(group);
+        responseDto.setOwnerName(group.getOwner().getUsername());
+        return responseDto;
     }
     public List<GroupShortDto> getUserGroups() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

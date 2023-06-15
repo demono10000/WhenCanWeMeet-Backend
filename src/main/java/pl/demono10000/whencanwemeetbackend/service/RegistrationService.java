@@ -6,7 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import pl.demono10000.whencanwemeetbackend.dto.RegisterDto;
+import pl.demono10000.whencanwemeetbackend.dto.StatusAndMessageDto;
 import pl.demono10000.whencanwemeetbackend.dto.UserDto;
 import pl.demono10000.whencanwemeetbackend.model.User;
 import pl.demono10000.whencanwemeetbackend.repository.UserRepository;
@@ -23,21 +23,21 @@ public class RegistrationService {
         this.userRepository = userRepository;
     }
 
-    public RegisterDto register(UserDto userDto) {
+    public StatusAndMessageDto register(UserDto userDto) {
         if (userDto == null) {
-            return new RegisterDto(false, "User data cannot be null.");
+            return new StatusAndMessageDto(false, "User data cannot be null.");
         }
 
         if (StringUtils.isEmpty(userDto.getUsername())) {
-            return new RegisterDto(false, "Username cannot be empty.");
+            return new StatusAndMessageDto(false, "Username cannot be empty.");
         }
 
         if (StringUtils.isEmpty(userDto.getPassword())) {
-            return new RegisterDto(false, "Password cannot be empty.");
+            return new StatusAndMessageDto(false, "Password cannot be empty.");
         }
 
         if (userRepository.findByUsername(userDto.getUsername()).isPresent()) {
-            return new RegisterDto(false, "Username already taken.");
+            return new StatusAndMessageDto(false, "Username already taken.");
         }
 
         try {
@@ -49,9 +49,9 @@ public class RegistrationService {
             userRepository.save(user);
 
         } catch (DataIntegrityViolationException e) {
-            return new RegisterDto(false, "Error during registration. Please try again.");
+            return new StatusAndMessageDto(false, "Error during registration. Please try again.");
         }
 
-        return new RegisterDto(true, "User registered successfully.");
+        return new StatusAndMessageDto(true, "User registered successfully.");
     }
 }

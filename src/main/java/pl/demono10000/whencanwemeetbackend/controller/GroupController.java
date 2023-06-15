@@ -2,9 +2,7 @@ package pl.demono10000.whencanwemeetbackend.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import pl.demono10000.whencanwemeetbackend.dto.CreateGroupDto;
-import pl.demono10000.whencanwemeetbackend.dto.GroupResponseDto;
-import pl.demono10000.whencanwemeetbackend.dto.GroupShortDto;
+import pl.demono10000.whencanwemeetbackend.dto.*;
 import pl.demono10000.whencanwemeetbackend.service.CreateGroupService;
 import pl.demono10000.whencanwemeetbackend.service.GroupService;
 
@@ -18,15 +16,19 @@ public class GroupController {
     private final GroupService groupService;
 
     @PostMapping("/create")
-    public GroupResponseDto createGroup(@RequestBody CreateGroupDto createGroupDto) {
+    public StatusAndMessageDto createGroup(@RequestBody CreateGroupDto createGroupDto) {
         return createGroupService.save(createGroupDto);
     }
     @PostMapping("/groups")
     public List<GroupShortDto> getUserGroups() {
         return groupService.getUserGroups();
     }
-    @GetMapping("/{id}")
+    @PostMapping("/{id}")
     public GroupResponseDto getGroup(@PathVariable("id") Long groupId) {
         return groupService.getGroupDetails(groupId);
+    }
+    @PostMapping("/removeUser/{id}")
+    public StatusAndMessageDto removeUser(@PathVariable("id") Long groupId, @RequestBody RemoveUserFromGroupDto userName) {
+        return groupService.removeUser(groupId, userName);
     }
 }

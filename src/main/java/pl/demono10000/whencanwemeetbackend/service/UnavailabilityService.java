@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import pl.demono10000.whencanwemeetbackend.dto.AddUnavailabilityDto;
+import pl.demono10000.whencanwemeetbackend.dto.StatusAndMessageDto;
 import pl.demono10000.whencanwemeetbackend.dto.UserUnavailabilityResponseDto;
 import pl.demono10000.whencanwemeetbackend.model.User;
 import pl.demono10000.whencanwemeetbackend.model.UserUnavailability;
@@ -23,7 +24,20 @@ public class UnavailabilityService {
 
     private final UserUnavailabilityRepository userUnavailabilityRepository;
 
-    public UserUnavailabilityResponseDto save(AddUnavailabilityDto addUnavailabilityDto) {
+    public StatusAndMessageDto save(AddUnavailabilityDto addUnavailabilityDto) {
+        // Check if dto is null
+        if (addUnavailabilityDto == null) {
+            return new StatusAndMessageDto(false, "Unavailability data cannot be null.");
+        }
+
+        // Check if start and end dates are valid
+        if (addUnavailabilityDto.start_date() == null || addUnavailabilityDto.end_date() == null) {
+            return new StatusAndMessageDto(false, "Start and end dates cannot be null.");
+        }
+
+        if (addUnavailabilityDto.start_date().compareTo(addUnavailabilityDto.end_date()) > 0) {
+            return new StatusAndMessageDto(false, "Start date cannot be after end date.");
+        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         User user = userPrincipal.getUser();
@@ -37,16 +51,7 @@ public class UnavailabilityService {
                 .build();
         UserUnavailability savedUserUnavailability = userUnavailabilityRepository.save(userUnavailability);
 
-        UserUnavailabilityResponseDto responseDto = new UserUnavailabilityResponseDto();
-        responseDto.setStartDate(savedUserUnavailability.getStart_date());
-        responseDto.setEndDate(savedUserUnavailability.getEnd_date());
-        responseDto.setUserId(savedUserUnavailability.getUser().getId());
-        responseDto.setRepeatDayOfMonth(savedUserUnavailability.getRepeatDayOfMonth());
-        responseDto.setRepeatDaysOfWeek(savedUserUnavailability.getRepeatDaysOfWeek());
-        responseDto.setRepeatDaysInterval(savedUserUnavailability.getRepeatDaysInterval());
-        responseDto.setId(savedUserUnavailability.getId());
-
-        return responseDto;
+        return new StatusAndMessageDto(true, "Unavailability saved");
     }
     public List<UserUnavailabilityResponseDto> getUnavailabilities() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -87,10 +92,16 @@ public class UnavailabilityService {
         return responseDtos;
     }
 
-    public void deleteUnavailability(Long unavailabilityId) {
+    public StatusAndMessageDto deleteUnavailability(Long unavailabilityId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        User user = userPrincipal.getUser();
         UserUnavailability unavailability = userUnavailabilityRepository.findById(unavailabilityId)
                 .orElseThrow(() -> new RuntimeException("Unavailability not found"));
-
+        if (!unavailability.getUser().getId().equals(user.getId())) {
+            return new StatusAndMessageDto(false, "You are not the owner of this unavailability");
+        }
         userUnavailabilityRepository.delete(unavailability);
+        return new StatusAndMessageDto(true, "Unavailability deleted");
     }
 }
